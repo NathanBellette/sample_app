@@ -3,5 +3,23 @@
   <div class="field">
     <%= f.text_area :content, placeholder: "Compose new micropost..." %>
   </div>
+  <p><span id="chars-remaining" style="display: inline">140</span> characters remaining</p>
   <%= f.submit "Post", class: "btn btn-large btn-primary" %>
 <% end %>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#micropost_content').keyup(function(){
+			var remaining = 140 - $('#micropost_content').val().length;
+			$('#chars-remaining').text(remaining);
+			  if(remaining <= 10)
+			    {
+			        $("#chars-remaining").css("color","red");
+			    }
+			    else
+			    {
+			        $("#chars-remaining").css("color","black");
+			    }
+		});
+	});
+</script>

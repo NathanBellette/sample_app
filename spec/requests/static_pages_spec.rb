@@ -20,9 +20,12 @@ describe "Static pages" do
     
     describe "for signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
+     # let(:another_user)  { FactoryGirl.create(:user) }
+      
       before do
         FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
         FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
+        #@micropost = FactoryGirl.create(:micropost, user: another_user, content: "Another users post!")
         sign_in user
         visit root_path
       end
@@ -32,6 +35,22 @@ describe "Static pages" do
           page.should have_selector("li##{item.id}", text: item.content)
         end
       end
+       
+      it "sidebar should have a micropost count" do
+        include RSpec::Core::Formatters::Helpers
+        page.should have_selector("section h1", text: user.name)
+        page.should have_selector("section span", text: helper.pluralize(Micropost.count.to_s, "micropost"))
+      end
+      
+      describe "pagination" do
+        it "should paginate the feed" do
+          30.times { FactoryGirl.create(:micropost, user: user, content: "Consectetur adipiscing elit") }
+          visit root_path
+          page.should have_selector("div.pagination")
+        end
+      end
+      
+      #it { should_not have_link("delete", href: micropost_path(@micropost)) }
     end
   end
 
